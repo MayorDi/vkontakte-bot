@@ -1,0 +1,12 @@
+[package]
+name = "vkontakte-bot"
+version = "0.0.1"
+edition = "2021"
+authors = ["Dmitriy Mayorov<MayorDi@yandex.ru>"]
+license = "Apache-2.0"
+readme = "README.md"
+rust-version = "1.68.0"
+repository = ""
+homepage = ""
+
+[dependencies]
