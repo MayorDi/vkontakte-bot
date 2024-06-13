@@ -12,10 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub mod alias;
-pub mod api;
-pub mod consts;
-pub mod error;
-pub mod event;
-pub mod result;
-pub mod vkbot;
+use crate::vkbot::context::Context;
+
+#[derive(Debug, Clone)]
+pub struct Command {
+    pub(crate) pattern: String,
+    pub(crate) callback: fn(Context),
+}
+
+impl Command {
+    pub fn new(pattern: &str, callback: fn(Context)) -> Self {
+        Self {
+            pattern: pattern.to_string(),
+            callback,
+        }
+    }
+}

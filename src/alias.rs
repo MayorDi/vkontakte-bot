@@ -12,10 +12,5 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub mod alias;
-pub mod api;
-pub mod consts;
-pub mod error;
-pub mod event;
-pub mod result;
-pub mod vkbot;
+pub type VersionApi = String;
+pub type Id = u64;

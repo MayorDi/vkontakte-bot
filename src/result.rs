@@ -12,10 +12,4 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub mod alias;
-pub mod api;
-pub mod consts;
-pub mod error;
-pub mod event;
-pub mod result;
-pub mod vkbot;
+pub type Result<T> = std::result::Result<T, serde_json::Value>;
