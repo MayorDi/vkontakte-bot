@@ -1,13 +1,16 @@
 [package]
 name = "vkontakte-bot"
+description = "Library for creating bots for the VK social network."
 version = "0.0.1"
 edition = "2021"
 authors = ["Dmitriy Mayorov<MayorDi@yandex.ru>"]
 license = "Apache-2.0"
 readme = "README.md"
 rust-version = "1.68.0"
-repository = ""
-homepage = ""
+keywords = ["VKontakte", "api", "vk", "vk bot", "chat"]
+categories = ["api-bindings "]
+repository = "https://github.com/MayorDi/vkontakte-bot"
+homepage = "https://github.com/MayorDi/vkontakte-bot"
 
 [dependencies]
 reqwest = { version = "*", features = ["blocking"] }

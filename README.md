@@ -4,7 +4,7 @@ VKontakte-bot
 `VKontakte-bot` - это маленькая библиотека, создана в целях практики.
 
 ## Example
-```
+``` rust
 let access_token = "your token";
 let group_id = 0; // id of your group
 
