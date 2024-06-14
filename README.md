@@ -1,3 +1,7 @@
+<div align="center">
+    <img src="assets/logo.png" width = 255/>
+</div>
+
 VKontakte-bot
 ===
 
