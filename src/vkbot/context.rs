@@ -12,29 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::{alias::Id, api::ApiSettings};
+use regex::Captures;
 
-#[derive(Debug, Clone)]
-pub struct Context {
-    ctx_id: Id,
-    api_settings: ApiSettings,
+use crate::{api::ApiSettings, event::message::Message};
+
+#[derive(Debug)]
+pub struct Context<'c> {
+    pub(crate) api_settings: ApiSettings,
+    pub captures: Captures<'c>,
+    pub message: Message,
 }
 
-impl Context {
-    pub(crate) fn new(ctx_id: Id, api_settings: ApiSettings) -> Self {
-        Self {
-            ctx_id,
-            api_settings,
-        }
-    }
-
+impl<'c> Context<'c> {
     pub fn reply(&self, message: &str) -> crate::result::Result<()> {
         let message = crate::api::message::Message {
             random_id: 0,
-            peer_id: self.ctx_id,
+            peer_id: self.message.from_id,
             message: message.to_string(),
         };
 
         message.send(&self.api_settings)
+    }
+
+    pub fn get_captures(&'c self) -> &'c Captures<'c> {
+        &self.captures
     }
 }

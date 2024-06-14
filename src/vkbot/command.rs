@@ -15,15 +15,15 @@
 use crate::vkbot::context::Context;
 
 #[derive(Debug, Clone)]
-pub struct Command {
-    pub(crate) pattern: String,
+pub struct Command<'re> {
+    pub(crate) regex: &'re str,
     pub(crate) callback: fn(Context),
 }
 
-impl Command {
-    pub fn new(pattern: &str, callback: fn(Context)) -> Self {
+impl<'re> Command<'re> {
+    pub fn new(regex: &'re str, callback: fn(Context)) -> Self {
         Self {
-            pattern: pattern.to_string(),
+            regex,
             callback,
         }
     }

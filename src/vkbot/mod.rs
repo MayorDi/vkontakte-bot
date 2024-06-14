@@ -15,6 +15,7 @@
 use command::Command;
 use context::Context;
 use long_poll_server::LongPollServer;
+use regex::Regex;
 
 use crate::{
     api::ApiSettings,
@@ -27,14 +28,14 @@ mod context;
 mod long_poll_server;
 
 #[derive(Debug, Clone)]
-pub struct VkBot {
+pub struct VkBot<'re> {
     pub id: u32,
     pub api_settings: ApiSettings,
     long_poll_server: Option<LongPollServer>,
-    commands: Vec<Command>,
+    commands: Vec<Command<'re>>,
 }
 
-impl VkBot {
+impl<'re> VkBot<'re> {
     pub fn new(id: u32, api_settings: ApiSettings) -> Self {
         Self {
             id,
@@ -50,48 +51,49 @@ impl VkBot {
         Ok(self)
     }
 
-    pub fn command(&mut self, pattern: &str, callback: fn(Context)) {
-        self.commands.push(Command::new(pattern, callback));
+    pub fn command(&mut self, regex: &'re str, callback: fn(Context)) {
+        self.commands.push(Command::new(regex, callback));
     }
 
     pub fn run(self) -> std::result::Result<(), Error> {
-        match self.long_poll_server {
-            Some(mut long_poll_server) => loop {
-                let res = long_poll_server.update();
+        if let None = self.long_poll_server {
+            return Err(Error::VkBotIsNotInit);
+        }
 
-                match res {
-                    Ok(res) => {
-                        let events = Self::generate_events(res);
+        let mut long_poll_server = self.long_poll_server.unwrap();
+        loop {
+            let res = long_poll_server.update();
 
-                        for event in events.iter() {
-                            match event.type_event {
-                                TypeEvent::MessageNew => {
-                                    let message = crate::event::message::Message::from(
-                                        event.object["message"].clone(),
-                                    );
+            if let Err(e) = res {
+                return Err(Error::JsonError(e));
+            }
 
-                                    for cmd in self.commands.iter() {
-                                        if cmd.pattern != message.text {
-                                            continue;
-                                        }
+            let events = Self::generate_events(res.unwrap());
 
-                                        let ctx = Context::new(
-                                            message.from_id,
-                                            self.api_settings.clone(),
-                                        );
+            for event in events.iter() {
+                if let TypeEvent::MessageNew = event.type_event {
+                    let message =
+                        crate::event::message::Message::from(event.object["message"].clone());
 
-                                        (cmd.callback)(ctx);
-                                    }
-                                }
-                                _ => {}
-                            }
+                    for cmd in self.commands.iter() {
+                        let re = Regex::new(cmd.regex).unwrap();
+                        let captures = re.captures(&message.text);
+                        
+                        if let None = captures {
+                            continue;
                         }
-                    }
-                    Err(e) => return Err(Error::JsonError(e)),
-                }
-            },
 
-            None => return Err(Error::VkBotIsNotInit),
+                        let ctx = Context {
+                            api_settings: self.api_settings.clone(),
+                            captures: captures.unwrap(),
+                            message: message.clone(),
+                        };
+
+                        (cmd.callback)(ctx);
+                        break;
+                    }
+                }
+            }
         }
     }
 

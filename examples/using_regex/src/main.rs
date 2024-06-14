@@ -10,8 +10,9 @@ fn main() {
 
     let mut vk_bot = VkBot::new(group_id, api_settings);
 
-    vk_bot.command("/hello", |ctx| {
-        ctx.reply("hi!!!!!!").unwrap();
+    vk_bot.command(r"/num (?P<num>\d*)", |ctx| {
+        let res = &ctx.captures["num"];
+        ctx.reply(format!("num: {}", res).as_str()).unwrap();
     });
 
     vk_bot.init().unwrap().run().unwrap();
