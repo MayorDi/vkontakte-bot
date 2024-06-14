@@ -27,6 +27,21 @@ mod command;
 mod context;
 mod long_poll_server;
 
+/// It is the main structure in which all action takes place.
+/// Connects to the VK server, contains the basic settings of the used `API`, as well as a list of bot commands.
+/// ## Example
+/// ``` rust
+/// use vkontakte_bot::{api::ApiSettings, vkbot::VkBot};
+///
+/// let access_token = "your token";
+/// let group_id = 0; // id of your group
+///
+/// let api_settings = ApiSettings::new()
+///     .set_access_token(access_token)
+///     .set_version("5.99");
+///
+/// let mut vk_bot = VkBot::new(group_id, api_settings);
+/// ```
 #[derive(Debug, Clone)]
 pub struct VkBot<'re> {
     pub id: u32,
@@ -45,16 +60,19 @@ impl<'re> VkBot<'re> {
         }
     }
 
+    /// Initializing the Long Poll server.
     pub fn init(mut self) -> crate::result::Result<Self> {
         self.long_poll_server = Some(LongPollServer::new(self.clone())?);
 
         Ok(self)
     }
 
+    /// Adding new commands using `Regex`.
     pub fn command(&mut self, regex: &'re str, callback: fn(Context)) {
         self.commands.push(Command::new(regex, callback));
     }
 
+    /// Run the bot.
     pub fn run(self) -> std::result::Result<(), Error> {
         if let None = self.long_poll_server {
             return Err(Error::VkBotIsNotInit);
@@ -78,7 +96,7 @@ impl<'re> VkBot<'re> {
                     for cmd in self.commands.iter() {
                         let re = Regex::new(cmd.regex).unwrap();
                         let captures = re.captures(&message.text);
-                        
+
                         if let None = captures {
                             continue;
                         }
@@ -97,6 +115,7 @@ impl<'re> VkBot<'re> {
         }
     }
 
+    /// Creates a list of events as an abstraction over the `JSON` format.
     fn generate_events(json: serde_json::Value) -> Vec<Event> {
         let events = json["updates"].as_array().unwrap().clone();
         let mut res = vec![];

@@ -14,6 +14,7 @@
 
 use crate::alias::Id;
 
+/// Deserializing a message as an event.
 #[derive(Debug, Clone, PartialEq, Eq, serde::Deserialize)]
 pub struct Message {
     pub(crate) date: u64,

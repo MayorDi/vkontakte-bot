@@ -19,6 +19,7 @@ mod type_event;
 
 pub use type_event::TypeEvent;
 
+/// An event wrapper that processes JSON.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Event {
     pub(crate) type_event: TypeEvent,

@@ -16,6 +16,7 @@ use crate::alias::Id;
 
 use super::ApiSettings;
 
+/// Implements an abstraction for messages that will be sent to a specific user.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Message {
     pub(crate) random_id: Id,
@@ -24,6 +25,7 @@ pub struct Message {
 }
 
 impl Message {
+    /// Send a message to the user with certain API settings.
     pub fn send(&self, api_settings: &ApiSettings) -> crate::result::Result<()> {
         let (random_id, peer_id, message, access_token, v) = (
             &self.random_id,

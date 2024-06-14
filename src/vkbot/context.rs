@@ -16,6 +16,7 @@ use regex::Captures;
 
 use crate::{api::ApiSettings, event::message::Message};
 
+/// The context in which the event occurred.
 #[derive(Debug)]
 pub struct Context<'c> {
     pub(crate) api_settings: ApiSettings,
@@ -24,6 +25,7 @@ pub struct Context<'c> {
 }
 
 impl<'c> Context<'c> {
+    /// Send a message in response.
     pub fn reply(&self, message: &str) -> crate::result::Result<()> {
         let message = crate::api::message::Message {
             random_id: 0,
@@ -34,6 +36,7 @@ impl<'c> Context<'c> {
         message.send(&self.api_settings)
     }
 
+    /// Get the result of a regular expression.
     pub fn get_captures(&'c self) -> &'c Captures<'c> {
         &self.captures
     }

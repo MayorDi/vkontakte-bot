@@ -14,6 +14,7 @@
 
 use crate::impl_from_string;
 
+/// Describes possible events that may be needed.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TypeEvent {
     MessageTypingState,

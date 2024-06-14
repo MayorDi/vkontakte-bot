@@ -14,6 +14,7 @@
 
 use crate::vkbot::context::Context;
 
+/// Abstraction over `Callback`, contains the template for calling the command and contains the executing part.
 #[derive(Debug, Clone)]
 pub struct Command<'re> {
     pub(crate) regex: &'re str,

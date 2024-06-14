@@ -14,6 +14,7 @@
 
 use super::VkBot;
 
+/// It is an abstract implementation of the Long Poll server for convenient query generation.
 #[derive(Debug, Clone, PartialEq)]
 pub struct LongPollServer {
     server: String,
@@ -52,6 +53,7 @@ impl LongPollServer {
         }
     }
 
+    /// Update Long Poll structure to detect new events.
     pub fn update(&mut self) -> crate::result::Result<serde_json::Value> {
         let server = &self.server;
         let key = &self.key;
