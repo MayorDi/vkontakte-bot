@@ -14,7 +14,6 @@
 
 pub mod alias;
 pub mod api;
-pub mod consts;
 pub mod error;
 pub mod event;
 pub mod result;

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 use crate::alias::Id;
+use crate::generate_api_req;
 
 use super::ApiSettings;
 
@@ -35,8 +36,14 @@ impl Message {
             &api_settings.version,
         );
 
-        let req = format!(
-            "https://api.vk.com/method/messages.send?random_id={random_id}&peer_id={peer_id}&message={message}&access_token={access_token}&v={v}"
+        let req = generate_api_req!(
+            method: "messages.send" => {
+                random_id: random_id,
+                peer_id: peer_id,
+                message: message,
+                access_token: access_token,
+                v: v
+            }
         );
 
         let res = reqwest::blocking::ClientBuilder::new()
@@ -54,4 +61,23 @@ impl Message {
             None => Err(res),
         }
     }
+}
+
+#[macro_export]
+macro_rules! generate_api_req {
+    (method: $method:literal => {$($key:ident: $value:expr),+}) => {
+        {
+            let mut url = String::from("https://api.vk.com/method/");
+            url.push_str($method);
+            url.push('?');
+
+            $(
+                let key = stringify!($key);
+                let value = $value;
+                url.push_str(format!("&{key}={value}").as_str());
+            )+
+
+            url
+        }
+    };
 }

@@ -13,7 +13,8 @@
 // limitations under the License.
 
 //! The module describes API commands for working with the VKontakte social network.
-use crate::{alias::VersionApi, consts::DEFAULT_VERSION};
+#![macro_use]
+use crate::alias::VersionApi;
 
 pub mod message;
 
@@ -25,25 +26,11 @@ pub struct ApiSettings {
 }
 
 impl ApiSettings {
-    pub fn new() -> Self {
+    pub fn new<T: ToString>(access_token: T, version: T) -> Self {
         Self {
-            version: DEFAULT_VERSION.to_string(),
-            ..Default::default()
+            version: version.to_string(),
+            access_token: access_token.to_string()
         }
-    }
-
-    /// Change the version of the API used.
-    pub fn set_version(mut self, value: impl ToString) -> Self {
-        self.version = value.to_string();
-
-        self
-    }
-
-    /// Change access key.
-    pub fn set_access_token(mut self, value: impl ToString) -> Self {
-        self.access_token = value.to_string();
-
-        self
     }
 
     /// Get the installed VK API access key.

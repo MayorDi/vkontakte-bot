@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use crate::generate_api_req;
+
 use super::VkBot;
 
 /// It is an abstract implementation of the Long Poll server for convenient query generation.
@@ -27,8 +29,13 @@ impl LongPollServer {
         let id = vk_bot.id;
         let token = vk_bot.api_settings.access_token();
         let v = vk_bot.api_settings.version();
-        let req_url = format!(
-            "https://api.vk.com/method/groups.getLongPollServer?group_id={id}&access_token={token}&v={v}"
+
+        let req_url = generate_api_req!(
+            method: "groups.getLongPollServer" => {
+                group_id: id,
+                access_token: token,
+                v: v
+            }
         );
 
         let res = reqwest::blocking::ClientBuilder::new()
